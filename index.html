@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>💖 Para ti 💖</title>
+  <meta name="description" content="Un mensajito romántico con corazones flotando y música suave." />
+  <style>
+    :root{
+      --bg:#ffe6ef;           /* rosado pastel */
+      --text:#7a1747;         /* vino suave */
+      --heart:#ff4d88;        /* corazón */
+      --heart2:#ff99bb;       /* corazón claro */
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Pantalla inicial */
+    .gate{
+      position:fixed; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      background: radial-gradient(120% 120% at 50% 15%, #fff7fc 0%, var(--bg) 60%);
+      z-index:5;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .gate-btn{
+      padding:16px 22px;
+      border-radius:16px;
+      background:#ffffffcc;
+      border:2px solid #ffcfe1;
+      box-shadow: 0 8px 24px #ff8fb940;
+      font-weight:700;
+      font-size: clamp(20px, 5vw, 28px);
+      text-align:center;
+      transition: transform .1s ease, box-shadow .2s ease;
+    }
+    .gate:active .gate-btn{ transform: scale(.98); box-shadow: 0 6px 16px #ff8fb930; }
+
+    /* Contenedor principal */
+    .wrap{
+      min-height:100dvh;
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+      padding: 24px;
+    }
+
+    /* Texto central con animación suave de aparición */
+    .card{
+      max-width: 680px;
+      width: 100%;
+      background:#ffffffcc;
+      border:2px solid #ffcfe1;
+      border-radius: 20px;
+      padding: clamp(18px, 4.5vw, 28px);
+      box-shadow: 0 10px 30px #ff8fb930;
+      backdrop-filter: blur(4px);
+      text-align:center;
+      animation: floatIn .7s ease both;
+    }
+    @keyframes floatIn{
+      from{ transform: translateY(8px); opacity:0 }
+      to{ transform: translateY(0); opacity:1 }
+    }
+
+    .type{
+      display:inline-block;
+      font-size: clamp(20px, 5.8vw, 36px);
+      line-height:1.35;
+      letter-spacing:.2px;
+      white-space: pre-wrap;
+    }
+    /* Cursor de máquina de escribir */
+    .type::after{
+      content:"";
+      display:inline-block;
+      width: 1.1ch;
+      border-right: 3px solid var(--text);
+      margin-left:2px;
+      animation: caret .9s steps(1) infinite;
+      vertical-align: -4px;
+    }
+    @keyframes caret{ 50%{ border-color: transparent } }
+
+    /* Corazones flotando */
+    .hearts{
+      position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0;
+    }
+    .heart{
+      position:absolute;
+      width:clamp(14px, 3.8vw, 24px);
+      height:clamp(14px, 3.8vw, 24px);
+      transform: rotate(45deg);
+      animation: floatUp linear infinite;
+      opacity:.9;
+      filter: drop-shadow(0 4px 8px #ff6fa633);
+    }
+    .heart::before, .heart::after{
+      content:"";
+      position:absolute;
+      width:100%; height:100%;
+      background: var(--heart);
+      border-radius:50%;
+    }
+    .heart::before{ left:-50%; }
+    .heart::after{ top:-50%; }
+    .heart.alt{
+      opacity:.7;
+    }
+    .heart.alt::before, .heart.alt::after{ background: var(--heart2); }
+
+    @keyframes floatUp{
+      0%   { transform: translateY(110vh) rotate(45deg) scale(.9); }
+      100% { transform: translateY(-15vh) rotate(45deg) scale(1.05); }
+    }
+
+    /* Botón de mute */
+    .controls{
+      position: fixed;
+      right: 10px; bottom: 10px;
+      z-index:3;
+    }
+    .mute{
+      border:none; border-radius:999px;
+      background:#ffffffd0; color:#b01861;
+      padding:10px 14px; font-size:14px; font-weight:600;
+      box-shadow:0 6px 18px #ff8fb92e; cursor:pointer;
+    }
+    .mute:active{ transform: scale(.98); }
+
+    /* Accesibilidad preferencia de reducción de movimiento */
+    @media (prefers-reduced-motion: reduce){
+      .heart, .type::after { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Pantalla inicial -->
+  <div class="gate" id="gate" aria-label="Pantalla inicial. Toca para comenzar">
+    <div class="gate-btn">💖 Toca aquí bb ^_^ 💖</div>
+  </div>
+
+  <!-- Corazones -->
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
+  <!-- Mensaje -->
+  <main class="wrap">
+    <section class="card" id="card" style="visibility:hidden">
+      <div class="type" id="typeTarget" aria-live="polite" aria-label="Mensaje romántico"></div>
+    </section>
+  </main>
+
+  <!-- Controles -->
+  <div class="controls">
+    <button class="mute" id="muteBtn" style="display:none" aria-pressed="false">🔊 Sonido</button>
+  </div>
+
+  <!-- Si deseas usar un MP3 royalty-free externo en lugar del audio generado:
+       1) Sube tu archivo a un hosting/CDN o usa un enlace libre de derechos.
+       2) Descomenta el <audio> y pega el link en src. Mantén preload="none" y loop.
+       3) El script ya detecta y usa el <audio> si existe.
+  <audio id="bgAudio" src="PEGAR_AQUI_TU_ENLACE_MP3_ROYALTY_FREE.mp3" preload="none" loop crossorigin="anonymous"></audio>
+  -->
+
+  <script>
+    // Mensaje a tipear
+    const message = "Me tienes loco, me tienes pegado al cel todo el día, me tienes soñando contigo, Me tienes pensando en ti y bueno, Me tienes enamorado de ti (●'◡'●).";
+
+    const gate = document.getElementById('gate');
+    const card = document.getElementById('card');
+    const target = document.getElementById('typeTarget');
+    const heartsLayer = document.getElementById('hearts');
+    const muteBtn = document.getElementById('muteBtn');
+
+    // Generación de corazones
+    function spawnHearts(){
+      const count = 22; // cantidad base (ligero para móvil)
+      for(let i=0;i<count;i++){
+        const h = document.createElement('div');
+        h.className = 'heart' + (Math.random() < 0.5 ? ' alt' : '');
+        const left = Math.random()*100;
+        const dur = 10 + Math.random()*10; // 10–20s
+        const delay = Math.random()*-20;
+        const size = 0.8 + Math.random()*1.4; // escala
+        h.style.left = left + 'vw';
+        h.style.animationDuration = dur + 's';
+        h.style.animationDelay = delay + 's';
+        h.style.transform = `translateY(110vh) rotate(45deg) scale(${size})`;
+        heartsLayer.appendChild(h);
+      }
+      // Re-llenar suavemente en el tiempo
+      setInterval(()=>{
+        const h = document.createElement('div');
+        h.className = 'heart' + (Math.random() < 0.5 ? ' alt' : '');
+        const left = Math.random()*100;
+        const dur = 10 + Math.random()*10;
+        const delay = Math.random()*-20;
+        const size = 0.8 + Math.random()*1.4;
+        h.style.left = left + 'vw';
+        h.style.animationDuration = dur + 's';
+        h.style.animationDelay = delay + 's';
+        h.style.transform = `translateY(110vh) rotate(45deg) scale(${size})`;
+        heartsLayer.appendChild(h);
+        // limpiar nodos antiguos
+        const maxNodes = 60;
+        if(heartsLayer.childElementCount > maxNodes){
+          heartsLayer.removeChild(heartsLayer.firstChild);
+        }
+      }, 900);
+    }
+
+    // Efecto máquina de escribir
+    function typeIt(text, el, speed=35){
+      return new Promise(resolve=>{
+        el.textContent = '';
+        let i = 0;
+        const timer = setInterval(()=>{
+          el.textContent += text[i++];
+          if(i >= text.length){ clearInterval(timer); resolve(); }
+        }, speed);
+      });
+    }
+
+    // Audio: usa <audio> si existe; de lo contrario, genera música suave con Web Audio (sin datos, sin copyright)
+    let audioElement = document.getElementById('bgAudio');
+    let audioCtx, gainNode, isMuted = false, usingWebAudio = false, webAudioStopper = null;
+
+    function startMusic(){
+      if(audioElement){
+        audioElement.loop = true;
+        audioElement.preload = "none";
+        audioElement.volume = 0.25; // volumen bajo
+        const playPromise = audioElement.play();
+        if(playPromise && typeof playPromise.then === 'function'){
+          playPromise.then(()=>{}).catch(()=>{}); // silencioso
+        }
+        return;
+      }
+      // Web Audio: arpegio de acordes cálidos (loop)
+      usingWebAudio = true;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0.12; // bajo
+      gainNode.connect(audioCtx.destination);
+
+      // función para crear una nota con envolvente suave (piano-like)
+      function playNote(freq, t, dur=1.2){
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(freq, t);
+        // pequeña riqueza armónica
+        const o2 = audioCtx.createOscillator();
+        o2.type = 'triangle';
+        o2.frequency.setValueAtTime(freq*2, t);
+
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.6, t+0.03);
+        g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+
+        o.connect(g); o2.connect(g); g.connect(gainNode);
+        o.start(t); o.stop(t+dur);
+        o2.start(t); o2.stop(t+dur);
+      }
+
+      // Progresión romántica I–vi–IV–V (C–Am–F–G aprox.) en arpegio suave
+      const base = audioCtx.currentTime + 0.05;
+      const bpm = 72; // calmado
+      const beat = 60 / bpm;
+      const bar = beat * 4;
+
+      function schedule(t0){
+        const chords = [
+          [261.63, 329.63, 392.00], // C
+          [220.00, 261.63, 329.63], // Am
+          [174.61, 220.00, 349.23], // F
+          [196.00, 246.94, 392.00], // G
+        ];
+        // arpegio: nota cada beat
+        chords.forEach((ch, idx)=>{
+          const tt = t0 + idx*bar;
+          // arpegio 1-2-3-2
+          playNote(ch[0], tt + beat*0, 1.4);
+          playNote(ch[1], tt + beat*1, 1.3);
+          playNote(ch[2], tt + beat*2, 1.2);
+          playNote(ch[1], tt + beat*3, 1.1);
+        });
+      }
+
+      // programar en loop suave
+      let startT = base;
+      schedule(startT);
+      schedule(startT + 4* (60/72)); // siguiente compás de seguridad
+
+      const loopDur = 4 * (60/72); // 4 compases
+      webAudioStopper = setInterval(()=>{
+        startT = audioCtx.currentTime;
+        schedule(startT);
+      }, loopDur*1000);
+    }
+
+    function stopMusic(){
+      if(audioElement){
+        audioElement.pause();
+        audioElement.currentTime = 0;
+        return;
+      }
+      if(usingWebAudio && audioCtx){
+        clearInterval(webAudioStopper);
+        try{ audioCtx.close(); }catch(e){}
+        usingWebAudio = false;
+      }
+    }
+
+    function toggleMute(){
+      isMuted = !isMuted;
+      if(audioElement){
+        audioElement.muted = isMuted;
+      }else if(gainNode){
+        gainNode.gain.setValueAtTime(isMuted ? 0 : 0.12, (audioCtx?.currentTime||0));
+      }
+      muteBtn.textContent = isMuted ? "🔇 Silenciado" : "🔊 Sonido";
+      muteBtn.setAttribute('aria-pressed', String(!isMuted));
+    }
+
+    muteBtn.addEventListener('click', toggleMute);
+
+    // Iniciar experiencia al tocar
+    function startExperience(){
+      // quitar gate
+      gate.style.opacity = '0';
+      setTimeout(()=> gate.style.display = 'none', 200);
+
+      // música
+      startMusic();
+
+      // mostrar controles
+      muteBtn.style.display = 'inline-block';
+
+      // corazones
+      spawnHearts();
+
+      // mostrar tarjeta y tipear
+      card.style.visibility = 'visible';
+      typeIt(message, target, 30);
+    }
+
+    // Para cumplir con los requisitos de reproducción en móvil, solo arrancamos tras un gesto
+    gate.addEventListener('click', startExperience, { once:true });
+    gate.addEventListener('touchend', (e)=>{ e.preventDefault(); startExperience(); }, { once:true });
+
+    // Limpieza al cerrar página
+    window.addEventListener('pagehide', stopMusic);
+  </script>
+</body>
+</html>
