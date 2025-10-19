@@ -10,10 +10,11 @@
   <meta property="og:description" content="Toca y descubre lo que siento por ti 💌">
   <meta property="og:image" content="https://luisadrianalvarez2009-alt.github.io/I-love-you/preview.jpg">
   <meta property="og:url" content="https://luisadrianalvarez2009-alt.github.io/I-love-you/">
+  <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#ffb6c1">
+  <meta name="description" content="Un mensajito romántico con corazones flotando, música y amor." />
 
-  <meta name="description" content="Un mensajito romántico con corazones flotando y música suave." />
   <style>
     :root{
       --bg:#ffe6ef;
@@ -21,71 +22,47 @@
       --heart:#ff4d88;
       --heart2:#ff99bb;
     }
-
     *{box-sizing:border-box}
     html,body{
       height:100%;
       margin:0;
       background:var(--bg);
       color:var(--text);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans";
     }
 
     .gate{
       position:fixed; inset:0;
       display:flex; align-items:center; justify-content:center;
       background: radial-gradient(120% 120% at 50% 15%, #fff7fc 0%, var(--bg) 60%);
-      z-index:5;
-      cursor:pointer;
-      user-select:none;
-      -webkit-tap-highlight-color:transparent;
+      z-index:5; cursor:pointer; user-select:none;
     }
     .gate-btn{
       padding:16px 22px;
       border-radius:16px;
       background:#ffffffcc;
       border:2px solid #ffcfe1;
-      box-shadow: 0 8px 24px #ff8fb940;
-      font-weight:700;
-      font-size: clamp(20px, 5vw, 28px);
-      text-align:center;
-      transition: transform .1s ease, box-shadow .2s ease;
+      box-shadow:0 8px 24px #ff8fb940;
+      font-weight:700; font-size:clamp(20px,5vw,28px);
+      transition:transform .1s ease, box-shadow .2s ease;
     }
-    .gate:active .gate-btn{ transform: scale(.98); box-shadow: 0 6px 16px #ff8fb930; }
+    .gate:active .gate-btn{transform:scale(.98);box-shadow:0 6px 16px #ff8fb930;}
 
-    .wrap{
-      min-height:100dvh;
-      display:grid;
-      place-items:center;
-      position:relative;
-      overflow:hidden;
-      padding:24px;
-    }
-
+    .wrap{min-height:100dvh;display:grid;place-items:center;overflow:hidden;padding:24px;}
     .card{
-      max-width:680px;
-      width:100%;
-      background:#ffffffcc;
-      border:2px solid #ffcfe1;
-      border-radius:20px;
+      max-width:680px;width:100%;background:#ffffffcc;
+      border:2px solid #ffcfe1;border-radius:20px;
       padding:clamp(18px,4.5vw,28px);
       box-shadow:0 10px 30px #ff8fb930;
-      backdrop-filter:blur(4px);
-      text-align:center;
+      backdrop-filter:blur(4px);text-align:center;
       animation:floatIn .7s ease both;
     }
-    @keyframes floatIn{
-      from{transform:translateY(8px);opacity:0}
-      to{transform:translateY(0);opacity:1}
-    }
+    @keyframes floatIn{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
 
     .type{
       display:inline-block;
       font-size:clamp(20px,5.8vw,36px);
       line-height:1.35;
-      letter-spacing:.2px;
       white-space:pre-wrap;
     }
     .type::after{
@@ -99,97 +76,90 @@
     }
     @keyframes caret{50%{border-color:transparent}}
 
-    .hearts{
-      position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0;
-    }
+    /* corazones */
+    .hearts{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
     .heart{
       position:absolute;
-      width:clamp(14px,3.8vw,24px);
-      height:clamp(14px,3.8vw,24px);
+      width:clamp(14px,3.8vw,24px);height:clamp(14px,3.8vw,24px);
+      background:radial-gradient(circle at 30% 30%,#ff4d88 0%,#ff1a75 80%);
       transform:rotate(45deg);
       animation:floatUp linear infinite;
-      opacity:.9;
-      filter:drop-shadow(0 4px 8px #ff6fa633);
+      opacity:.9;filter:drop-shadow(0 4px 8px #ff6fa633);
     }
-    .heart::before, .heart::after{
-      content:"";
-      position:absolute;
-      width:100%; height:100%;
-      background:var(--heart);
+    .heart::before,.heart::after{
+      content:"";position:absolute;width:100%;height:100%;
+      background:radial-gradient(circle at 30% 30%,#ff4d88 0%,#ff1a75 80%);
       border-radius:50%;
     }
-    .heart::before{left:-50%;}
-    .heart::after{top:-50%;}
+    .heart::before{top:-50%;left:0;}
+    .heart::after{top:0;left:-50%;}
     .heart.alt{
-      opacity:.7;
+      background:radial-gradient(circle at 30% 30%,#ff99bb 0%,#ff66a3 80%);
+      opacity:.8;
     }
-    .heart.alt::before, .heart.alt::after{background:var(--heart2);}
+    .heart.alt::before,.heart.alt::after{
+      background:radial-gradient(circle at 30% 30%,#ff99bb 0%,#ff66a3 80%);
+    }
     @keyframes floatUp{
       0%{transform:translateY(110vh) rotate(45deg) scale(.9);}
       100%{transform:translateY(-15vh) rotate(45deg) scale(1.05);}
     }
 
-    .controls{
-      position:fixed;
-      right:10px; bottom:10px;
-      z-index:3;
-    }
+    .controls{position:fixed;right:10px;bottom:10px;z-index:3;}
     .mute{
-      border:none; border-radius:999px;
-      background:#ffffffd0; color:#b01861;
-      padding:10px 14px; font-size:14px; font-weight:600;
-      box-shadow:0 6px 18px #ff8fb92e; cursor:pointer;
-    }
-    .mute:active{transform:scale(.98);}
-    @media (prefers-reduced-motion:reduce){
-      .heart, .type::after{animation:none!important;}
+      border:none;border-radius:999px;background:#ffffffd0;color:#b01861;
+      padding:10px 14px;font-size:14px;font-weight:600;
+      box-shadow:0 6px 18px #ff8fb92e;cursor:pointer;
     }
   </style>
 </head>
 <body>
 
-  <div class="gate" id="gate" aria-label="Pantalla inicial. Toca para comenzar">
-    <div class="gate-btn">💖 Toca aquí bb ^_^ 💖</div>
-  </div>
-
-  <div class="hearts" id="hearts" aria-hidden="true"></div>
+  <div class="gate" id="gate"><div class="gate-btn">💖 Toca aquí bb ^_^ 💖</div></div>
+  <div class="hearts" id="hearts"></div>
 
   <main class="wrap">
     <section class="card" id="card" style="visibility:hidden">
-      <div class="type" id="typeTarget" aria-live="polite" aria-label="Mensaje romántico"></div>
+      <div class="type" id="typeTarget"></div>
     </section>
   </main>
 
   <div class="controls">
-    <button class="mute" id="muteBtn" style="display:none" aria-pressed="false">🔊 Sonido</button>
+    <button class="mute" id="muteBtn" style="display:none">🔊 Sonido</button>
   </div>
 
+  <!-- 🎵 Tu canción -->
+  <audio id="bgAudio"
+         src="Kiss - I Was Made For Lovin_ You(MP3_160K).mp3"
+         preload="none"
+         loop
+         playsinline
+         crossorigin="anonymous"></audio>
+
   <script>
-    // Mensaje a tipear
-    const message = "Me tienes loco, me tienes pegado al cel todo el día, me tienes soñando contigo, Me tienes pensando en ti y bueno, Me tienes enamorado de ti (●'◡'●).";
+    const message="Me tienes loco, me tienes pegado al cel todo el día, me tienes soñando contigo, Me tienes pensando en ti y bueno, Me tienes enamorado de ti (●'◡'●).";
+    const typingSpeed=120;
+    const gate=document.getElementById('gate');
+    const card=document.getElementById('card');
+    const target=document.getElementById('typeTarget');
+    const heartsLayer=document.getElementById('hearts');
+    const muteBtn=document.getElementById('muteBtn');
+    const audioEl=document.getElementById('bgAudio');
 
-    const typingSpeed = 120; // ⏳ más alto = más lento (antes era más rápido)
-
-    const gate = document.getElementById('gate');
-    const card = document.getElementById('card');
-    const target = document.getElementById('typeTarget');
-    const heartsLayer = document.getElementById('hearts');
-    const muteBtn = document.getElementById('muteBtn');
-
-    function typeMessage(text, speed){
-      let i = 0;
+    function typeMessage(text,speed){
+      let i=0;
       function type(){
-        if(i < text.length){
-          target.textContent += text.charAt(i);
-          i++;
-          setTimeout(type, speed);
+        if(i<text.length){
+          const ch=text.charAt(i);
+          target.textContent+=ch;i++;
+          const extra=(ch==='.'||ch==='!'||ch==='?')?400:(ch===','||ch===';'||ch===':')?200:0;
+          setTimeout(type,speed+extra);
         }
-      }
-      type();
+      } type();
     }
 
     function spawnHearts(){
-      const count = 22;
+      const count=22;
       for(let i=0;i<count;i++){
         const h=document.createElement('div');
         h.className='heart'+(Math.random()<0.5?' alt':'');
@@ -215,17 +185,57 @@
         h.style.animationDelay=delay+'s';
         h.style.transform=`translateY(110vh) rotate(45deg) scale(${size})`;
         heartsLayer.appendChild(h);
-        if(heartsLayer.childElementCount>60){
-          heartsLayer.removeChild(heartsLayer.firstChild);
-        }
+        if(heartsLayer.childElementCount>60) heartsLayer.removeChild(heartsLayer.firstChild);
       },900);
     }
 
-    gate.addEventListener('click',()=>{
+    function fadeTo(targetVol=0.4,ms=1200){
+      if(!audioEl)return;
+      const steps=24;
+      const stepMs=Math.max(16,Math.floor(ms/steps));
+      const start=audioEl.volume;
+      let i=0;
+      const id=setInterval(()=>{
+        i++; audioEl.volume=start+(targetVol-start)*(i/steps);
+        if(i>=steps)clearInterval(id);
+      },stepMs);
+    }
+
+    async function tryPlay(){
+      if(!audioEl)return;
+      try{
+        audioEl.volume=0.0;
+        await audioEl.play();
+        fadeTo(0.4,1200);
+        muteBtn.style.display='inline-block';
+        muteBtn.textContent='🔊 Sonido';
+      }catch(e){
+        muteBtn.style.display='inline-block';
+        muteBtn.textContent='🔇 Activar sonido';
+      }
+    }
+
+    function toggleMute(){
+      if(!audioEl)return;
+      if(audioEl.muted||audioEl.volume===0){
+        audioEl.muted=false;
+        if(audioEl.paused)audioEl.play().catch(()=>{});
+        fadeTo(0.4,400);
+        muteBtn.textContent='🔊 Sonido';
+      }else{
+        fadeTo(0.0,300);
+        setTimeout(()=>{audioEl.muted=true;},320);
+        muteBtn.textContent='🔇 Silencio';
+      }
+    }
+    muteBtn.addEventListener('click',toggleMute);
+
+    gate.addEventListener('click',async()=>{
       gate.style.display='none';
       card.style.visibility='visible';
       spawnHearts();
-      typeMessage(message, typingSpeed);
+      typeMessage(message,typingSpeed);
+      await tryPlay();
     });
   </script>
 </body>
