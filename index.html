@@ -5,15 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>💖 Para ti 💖</title>
 
-  <!-- Vista previa al compartir (Open Graph & Twitter) -->
+  <!-- Vista previa al compartir -->
   <meta property="og:title" content="💖 Un mensaje solo para ti 💖">
   <meta property="og:description" content="Toca y descubre lo que siento por ti 💌">
   <meta property="og:image" content="https://luisadrianalvarez2009-alt.github.io/I-love-you/preview.jpg">
   <meta property="og:url" content="https://luisadrianalvarez2009-alt.github.io/I-love-you/">
-  <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#ffb6c1">
-  <meta name="description" content="Un mensajito romántico con corazones flotando, música y amor." />
 
   <style>
     :root{
@@ -28,7 +26,8 @@
       margin:0;
       background:var(--bg);
       color:var(--text);
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans";
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+      -webkit-font-smoothing: antialiased;
     }
 
     .gate{
@@ -50,11 +49,14 @@
 
     .wrap{min-height:100dvh;display:grid;place-items:center;overflow:hidden;padding:24px;}
     .card{
-      max-width:680px;width:100%;background:#ffffffcc;
-      border:2px solid #ffcfe1;border-radius:20px;
+      max-width:680px;width:100%;
+      background:#ffffffcc;
+      border:2px solid #ffcfe1;
+      border-radius:20px;
       padding:clamp(18px,4.5vw,28px);
       box-shadow:0 10px 30px #ff8fb930;
-      backdrop-filter:blur(4px);text-align:center;
+      backdrop-filter:blur(4px);
+      text-align:center;
       animation:floatIn .7s ease both;
     }
     @keyframes floatIn{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -76,7 +78,6 @@
     }
     @keyframes caret{50%{border-color:transparent}}
 
-    /* corazones */
     .hearts{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
     .heart{
       position:absolute;
@@ -128,43 +129,55 @@
     <button class="mute" id="muteBtn" style="display:none">🔊 Sonido</button>
   </div>
 
-  <!-- 🎵 Tu canción -->
-<audio id="bgAudio"
-       src="Stephen Sanchez - Until I Found You (Official Video)(MP3_160K).mp3"
-       preload="none"
-       loop
-       playsinline
-       crossorigin="anonymous"></audio>
+  <!-- Tu canción -->
+  <audio id="bgAudio"
+         src="Stephen Sanchez - Until I Found You (Official Video)(MP3_160K).mp3"
+         preload="none"
+         loop
+         playsinline
+         crossorigin="anonymous"></audio>
 
-<script>
-  const message = `Me tienes pensando en ti a cada rato,
-  soñando contigo hasta despierto,
-  pegado al cel esperando un mensaje tuyo…
-  y sí, lo admito: me tienes completamente enamorado de ti. 💘`;
+  <script>
+    const message = `Me tienes pensando en ti a cada rato,
+    soñando contigo hasta despierto,
+    pegado al cel esperando un mensaje tuyo…
+    y sí, lo admito: me tienes completamente enamorado de ti. 💘`;
 
-  const typingSpeed = 90;
-  const gate = document.getElementById('gate');
-  const card = document.getElementById('card');
-  const target = document.getElementById('typeTarget');
-  const heartsLayer = document.getElementById('hearts');
-  const muteBtn = document.getElementById('muteBtn');
-  const audioEl = document.getElementById('bgAudio');
-</script>
+    const typingSpeed = 90;
+    const gate = document.getElementById('gate');
+    const card = document.getElementById('card');
+    const target = document.getElementById('typeTarget');
+    const heartsLayer = document.getElementById('hearts');
+    const muteBtn = document.getElementById('muteBtn');
+    const audioEl = document.getElementById('bgAudio');
 
-    function typeMessage(text,speed){
-      let i=0;
-      function type(){
-        if(i<text.length){
-          const ch=text.charAt(i);
-          target.textContent+=ch;i++;
-          const extra=(ch==='.'||ch==='!'||ch==='?')?400:(ch===','||ch===';'||ch===':')?200:0;
-          setTimeout(type,speed+extra);
+    function typeMessageByLines(text, speed){
+      const lines = text.split('\n');
+      let li = 0, ci = 0;
+
+      function step(){
+        if(li >= lines.length) return;
+        const line = lines[li];
+        const prev = lines.slice(0, li).join('\n');
+        const curr = line.slice(0, ci);
+        target.textContent = prev + (li ? '\n' : '') + curr;
+
+        if(ci < line.length){
+          const ch = line.charAt(ci++);
+          const extra = (ch === '.' || ch === '!' || ch === '…' || ch === '?') ? 180
+                      : (ch === ',' || ch === ';' || ch === ':') ? 90
+                      : 0;
+          setTimeout(step, speed + extra);
+        } else {
+          li++; ci = 0;
+          setTimeout(step, Math.max(320, speed * 3.5));
         }
-      } type();
+      }
+      step();
     }
 
     function spawnHearts(){
-      const count=22;
+      const count = 22;
       for(let i=0;i<count;i++){
         const h=document.createElement('div');
         h.className='heart'+(Math.random()<0.5?' alt':'');
@@ -190,66 +203,55 @@
         h.style.animationDelay=delay+'s';
         h.style.transform=`translateY(110vh) rotate(45deg) scale(${size})`;
         heartsLayer.appendChild(h);
-        if(heartsLayer.childElementCount>60) heartsLayer.removeChild(heartsLayer.firstChild);
+        if(heartsLayer.childElementCount>60){
+          heartsLayer.removeChild(heartsLayer.firstChild);
+        }
       },900);
     }
 
-    function fadeTo(targetVol=0.4,ms=1200){
-      if(!audioEl)return;
-      const steps=24;
-      const stepMs=Math.max(16,Math.floor(ms/steps));
-      const start=audioEl.volume;
-      let i=0;
-      const id=setInterval(()=>{
-        i++; audioEl.volume=start+(targetVol-start)*(i/steps);
-        if(i>=steps)clearInterval(id);
-      },stepMs);
+    function fadeTo(targetVol = 0.4, ms = 900){
+      if(!audioEl) return;
+      const steps = 24;
+      const stepMs = Math.max(16, Math.floor(ms/steps));
+      const start = audioEl.volume;
+      let i = 0;
+      const id = setInterval(()=>{
+        i++; audioEl.volume = start + (targetVol - start) * (i/steps);
+        if(i>=steps) clearInterval(id);
+      }, stepMs);
     }
 
-    async function tryPlay(){
-      if(!audioEl)return;
-      try{
-        audioEl.volume=0.0;
-        await audioEl.play();
-        fadeTo(0.4,1200);
-        muteBtn.style.display='inline-block';
-        muteBtn.textContent='🔊 Sonido';
-      }catch(e){
-        muteBtn.style.display='inline-block';
-        muteBtn.textContent='🔇 Activar sonido';
-      }
+    function tryPlay(){
+      if(!audioEl) return;
+      audioEl.volume = 0.0;
+      audioEl.play()
+        .then(()=>{ fadeTo(0.4, 900); muteBtn.style.display='inline-block'; muteBtn.textContent='🔊 Sonido'; })
+        .catch(()=>{ muteBtn.style.display='inline-block'; muteBtn.textContent='🔇 Activar sonido'; });
     }
 
     function toggleMute(){
-      if(!audioEl)return;
-      if(audioEl.muted||audioEl.volume===0){
-        audioEl.muted=false;
-        if(audioEl.paused)audioEl.play().catch(()=>{});
-        fadeTo(0.4,400);
-        muteBtn.textContent='🔊 Sonido';
+      if(!audioEl) return;
+      if(audioEl.muted || audioEl.volume === 0){
+        audioEl.muted = false;
+        if(audioEl.paused) audioEl.play().catch(()=>{});
+        fadeTo(0.4, 300);
+        muteBtn.textContent = '🔊 Sonido';
       }else{
-        fadeTo(0.0,300);
-        setTimeout(()=>{audioEl.muted=true;},320);
-        muteBtn.textContent='🔇 Silencio';
+        fadeTo(0.0, 250);
+        setTimeout(()=>{ audioEl.muted = true; }, 280);
+        muteBtn.textContent = '🔇 Silencio';
       }
     }
-    muteBtn.addEventListener('click',toggleMute);
+    muteBtn.addEventListener('click', toggleMute);
 
-    gate.addEventListener('click',async()=>{
+    gate.addEventListener('click', ()=>{
       gate.style.display='none';
       card.style.visibility='visible';
+      tryPlay();
       spawnHearts();
-      typeMessage(message,typingSpeed);
-      await tryPlay();
+      target.textContent = "";
+      typeMessageByLines(message, typingSpeed);
     });
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
