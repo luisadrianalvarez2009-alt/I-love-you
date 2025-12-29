@@ -116,7 +116,7 @@
 </head>
 <body>
 
-  <div class="gate" id="gate"><div class="gate-btn">💖 Toca aquí bb ^_^ 💖</div></div>
+  <div class="gate" id="gate"><div class="gate-btn">💖 Toca aquí por favor ^_^ 💖</div></div>
   <div class="hearts" id="hearts"></div>
 
   <main class="wrap">
@@ -134,11 +134,12 @@
          src="Stephen Sanchez - Until I Found You (Official Video)(MP3_160K).mp3"
          preload="none"
          loop
-         playsinline
-         crossorigin="anonymous"></audio>
+         playsinline></audio>
 
   <script>
-    const message = `Esto puede que sea o más cheo que te hayan dedicado, pero no me importa, no actue bien y te quiero pedir perdón. A veces me paso pero es pq te amo`;
+    const message = `Esto puede que sea lo más cheo que te hayan dedicado, pero no me importa.
+No actué bien y te quiero pedir perdón.
+A veces me paso, pero es porque te amo.`;
 
     const typingSpeed = 100;
     const gate = document.getElementById('gate');
@@ -175,71 +176,41 @@
 
     function spawnHearts(){
       const count = 22;
-      for(let i=0;i<count;i++){
-        const h=document.createElement('div');
-        h.className='heart'+(Math.random()<0.5?' alt':'');
-        const left=Math.random()*100;
-        const dur=10+Math.random()*10;
-        const delay=Math.random()*-20;
-        const size=0.8+Math.random()*1.4;
-        h.style.left=left+'vw';
-        h.style.animationDuration=dur+'s';
-        h.style.animationDelay=delay+'s';
-        h.style.transform=`translateY(110vh) rotate(45deg) scale(${size})`;
-        heartsLayer.appendChild(h);
-      }
-      setInterval(()=>{
-        const h=document.createElement('div');
-        h.className='heart'+(Math.random()<0.5?' alt':'');
-        const left=Math.random()*100;
-        const dur=10+Math.random()*10;
-        const delay=Math.random()*-20;
-        const size=0.8+Math.random()*1.4;
-        h.style.left=left+'vw';
-        h.style.animationDuration=dur+'s';
-        h.style.animationDelay=delay+'s';
-        h.style.transform=`translateY(110vh) rotate(45deg) scale(${size})`;
-        heartsLayer.appendChild(h);
-        if(heartsLayer.childElementCount>60){
-          heartsLayer.removeChild(heartsLayer.firstChild);
-        }
-      },900);
+      for(let i=0;i<count;i++) createHeart();
+      setInterval(createHeart,900);
     }
 
-    function fadeTo(targetVol = 0.4, ms = 900){
-      if(!audioEl) return;
-      const steps = 24;
-      const stepMs = Math.max(16, Math.floor(ms/steps));
-      const start = audioEl.volume;
-      let i = 0;
-      const id = setInterval(()=>{
-        i++; audioEl.volume = start + (targetVol - start) * (i/steps);
-        if(i>=steps) clearInterval(id);
-      }, stepMs);
+    function createHeart(){
+      const h=document.createElement('div');
+      h.className='heart'+(Math.random()<0.5?' alt':'');
+      h.style.left=Math.random()*100+'vw';
+      h.style.animationDuration=(10+Math.random()*10)+'s';
+      h.style.animationDelay=(Math.random()*-20)+'s';
+      h.style.transform=`translateY(110vh) rotate(45deg) scale(${0.8+Math.random()*1.4})`;
+      heartsLayer.appendChild(h);
+      if(heartsLayer.childElementCount>60){
+        heartsLayer.removeChild(heartsLayer.firstChild);
+      }
     }
 
     function tryPlay(){
-      if(!audioEl) return;
-      audioEl.volume = 0.0;
+      audioEl.volume = 0;
       audioEl.play()
-        .then(()=>{ fadeTo(0.4, 900); muteBtn.style.display='inline-block'; muteBtn.textContent='🔊 Sonido'; })
-        .catch(()=>{ muteBtn.style.display='inline-block'; muteBtn.textContent='🔇 Activar sonido'; });
+        .then(()=>{
+          audioEl.volume = 0.4;
+          muteBtn.style.display='inline-block';
+          muteBtn.textContent='🔊 Sonido';
+        })
+        .catch(()=>{
+          muteBtn.style.display='inline-block';
+          muteBtn.textContent='🔇 Activar sonido';
+        });
     }
 
-    function toggleMute(){
-      if(!audioEl) return;
-      if(audioEl.muted || audioEl.volume === 0){
-        audioEl.muted = false;
-        if(audioEl.paused) audioEl.play().catch(()=>{});
-        fadeTo(0.4, 300);
-        muteBtn.textContent = '🔊 Sonido';
-      }else{
-        fadeTo(0.0, 250);
-        setTimeout(()=>{ audioEl.muted = true; }, 280);
-        muteBtn.textContent = '🔇 Silencio';
-      }
-    }
-    muteBtn.addEventListener('click', toggleMute);
+    muteBtn.addEventListener('click', ()=>{
+      audioEl.muted = !audioEl.muted;
+      muteBtn.textContent = audioEl.muted ? '🔇 Silencio' : '🔊 Sonido';
+    });
 
     gate.addEventListener('click', ()=>{
       gate.style.display='none';
@@ -252,4 +223,3 @@
   </script>
 </body>
 </html>
-
